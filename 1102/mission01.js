@@ -1,73 +1,70 @@
-console.log("hello world!");
+var log_sequence = new Array();  //로그 기록용 배열객체
 
 
-var log_sequence = "";  //로그 기록용 전역변수
+//사용자한테 입력받기 (솔직히 아직도 이 파일입출력 코드가 정확히 어떻게 작동하는건지 이해가 안간다..)
+console.log("넓이를 구할 도형(circle, rect, trap)과 수치를 입력하시오.\n입력 형식 : 도형명,정수1,정수2,정수3")
 
+const readline = require("readline");
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-//입력받기
-const readline = require("readline"); 
-
-const rl = readline.createInterface({ 
-	input: process.stdin, output: process.stdout
-    }); 
-
-    //end 입력받을때까지 무한히 반복
-    //while(1)
-{
-    rl.on("line", function(line) {
-        var info = line.split(',');
-        
-        if(info[0] != "circle" && info[0] != "rect" && info[0] != "trap")
-        {
-            logStr = "잘못 입력";
-            console.log(logStr);
-            setLog(logStr + ":" + info[0]);
-        }
-        if(info[0] == "end")
-        {
-            process.exit();    
-        }
-        getArea(info[0], info[1], info[2], info[3]);
-        
-
+rl.on("line", function(line) {
+    var info = line.split(',');
+    
+    //종료 및 잘못 입력에 대한 예외처리
+    if(info[0] == "end")
+    {
+        console.log("##### 로그출력 #####");
         printExecutionSequence();
-        rl.close(); 
-        })
-        .on("close", function() {
-        process.exit();
-    });
-}
+        rl.close();
+    }
+    else if(info[0] != "circle" && info[0] != "rect" && info[0] != "trap")
+    {
+        console.log("[ERROR] Mistyped!!");
+        //setLog(logStr + ":" + info[0]);
+        setLog(`Mistyped:${info[0]}`);
+    }
+    else    //정상적으로 입력 받으면, 넓이를 구한다.
+    {
+        getArea(info[0], info[1], info[2], info[3]);
+    }
+}).on("close", function() {
+    process.exit();
+});
+
 
 
 
 //도형 타입을 분류하고 로그기록&결과 출력하는 함수
 function getArea(type, num1, num2, num3)
 {
-    result = type + " 넓이:";
-
     if(type == "circle")
     {
-        if(num2 == "undefined")
+        if(num2 == undefined)
         {
-            result += getCircle1(num1);
+            area = getCircle1(num1);
         }
         else
         {
-            result += getCircle2(num1, num2);
+            area = getCircle2(num1, num2);
         }   
     }
     else if(type == "rect")
     {
-        result += getRect(num1, num2);
+        area = getRect(num1, num2);
         
     }
     else if(type == "trap")
     {
-        result += getTrapezoid(num1, num2, num3);
+        area = getTrapezoid(num1, num2, num3);
     } 
-    console.log(result);
+    //console.log(type + " 넓이:" + area);
+    console.log(`${type} 넓이는? : ${area}`);
 
-    setLog(result);
+    //setLog(type + ":" + area);
+    setLog(`${type}:${area}`);
 }
 
 
@@ -101,10 +98,25 @@ function getTrapezoid(a, b, h)
 //로그 기록 관련 함수 (총 2종)
 function setLog(log)
 {
-    log_sequence += log + ",";
+    log_sequence.push(log);
 }
 
 function printExecutionSequence()
 {
-    console.log(log_sequence);
+    log_sequence.forEach(element => console.log(element));;
 }
+
+
+/*
+//테스트 케이스
+getArea('circle', 1);
+getArea('circle', 1, 2);
+getArea('circle', 3, 5);
+getArea('rect', 5, 10);
+getArea('trap', 4, 3, 10);
+getArea('rect', 6, 4);
+
+
+console.log("#####로그출력#####");
+printExecutionSequence();
+*/
