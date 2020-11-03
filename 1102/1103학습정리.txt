@@ -1,0 +1,124 @@
+undefined 대한 체크
+
+# 나의 이해
+
+- c나 c++의 null역할을 하는 것이 js에선 undefined이다.
+
+- 잘못된 정보로 인해, undefined 체크를 문자열로 체크하여 삽질함..
+
+   체크는 아래처럼..
+
+if(type == "circle")
+    {
+        if(num2 == undefined)
+        {
+            area = getCircle1(num1);
+        }
+        else
+        {
+            area = getCircle2(num1, num2);
+        }   
+    }
+​
+
+​
+
+파일입출력
+
+# 나의 이해
+
+- NodeJS에서 파일입출력은 readline으로 한다.
+
+- readline 모듈을 require함수를 통해 받아오고(?) 받아온 놈을 상수에 저장.
+
+  readline 내에 있는 creatInterface 함수를 이용한다. 이 함수에 인자로 인풋과 아웃풋을 주는데, 그게 stdin, stdout 인가봄.
+
+- 여튼 이놈을 on해서 입력받으면 line 스트링변수에 저장되는거 같다. line 변수는 스트링이니 스트링 관련 함수로 지지고 볶는게 가능한듯. 
+
+​
+
+​
+
+# 해결 포인트
+
+- 종료 명령을 입력 받기 전까지 무한히 입력받게 하고 싶었다. (백준 알고리즘 문제처럼.)
+
+  아래 링크의 설명을 통해,  종료명령(end)을 입력 받는 경우, rl.close 함수를 호출하도록 했다.
+
+  또한 종료할 땐, 입력 받았던 모든 명령에 대한 로그를 출력하도록 했다. 
+
+- 간단한 예외처리 하나 추가.
+
+  잘못된 도형명을 입력 받는 경우, 함수를 호출하지 않는 예외처리가 추가되었으면 좋겠다고 생각했다.
+
+  (아무래도 사용자한테 입력을 받기 때문에, 잘못된 입력에 대한 예외처리도 필요하다고 생각..
+
+  더 자세한 예외처리를 하기엔 시간이 좀 아까워서, 간단하게 circle, rect, trap이 아닌 것에 대한 예외만 체크했다.)
+
+- 그래서 위의 두 가지만 의도한 예외처리이고, 나머지는 전부 올바른 상황이라고 정의, else문 통해 getArea 함수를 호출하여 도형의 넓이를 구한다.
+
+​
+
+아래는 일단 구현한 소스코드..
+
+//사용자한테 입력받기 (솔직히 아직도 이 파일입출력 코드가 정확히 어떻게 작동하는건지 이해가 안간다..)
+console.log("넓이를 구할 도형(circle, rect, trap)과 수치를 입력하시오.\n입력 형식 : 도형명,정수1,정수2,정수3")
+
+const readline = require("readline");
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.on("line", function(line) {
+    var info = line.split(',');
+    
+    //종료 및 잘못 입력에 대한 예외처리
+    if(info[0] == "end")
+    {
+        console.log("##### 로그출력 #####");
+        printExecutionSequence();
+        rl.close();
+    }
+    else if(info[0] != "circle" && info[0] != "rect" && info[0] != "trap")
+    {
+        console.log("[ERROR] Mistyped!!");
+        //setLog(logStr + ":" + info[0]);
+        setLog(`Mistyped:${info[0]}`);
+    }
+    else    //정상적으로 입력 받으면, 넓이를 구한다.
+    {
+        getArea(info[0], info[1], info[2], info[3]);
+    }
+}).on("close", function() {
+    process.exit();
+});
+​
+
+참고한 링크는 아래
+
+https://wooooooak.github.io/node.js/2018/09/26/Node.js-%EC%9E%85%EB%A0%A5-%EB%B0%9B%EA%B8%B0/
+
+ 
+Node.js 입력 받기
+프로그래머스 같은 경우는 입력이 자동으로 되기 때문에 함수만 작성하면 된다. 그러나 구름ide 또는 백준 알고리즘 같은 경우 테스트 케이스 입력을 받기 위한 코드를 작성해야한다. Node.js로 입력을 받는데 헤맨 부분이 있어 입력 받는 방법을 간단하게 정리해보기로 했다. readline 백준 사이트에서 javascript로 풀어진 몇 예제를 보면 var fs = require ( ' fs ' ); var input = fs . readFileSync ( ' /dev/stdin ' ). toString (). split ( ' ' ...
+
+wooooooak.github.io
+
+​
+
+​
+
+템플릿 리터럴
+
+이건 혁명이다.
+
+그 동안 + 연산자로 문자열이랑 변수 더하면 욕먹어서.. concat함수로 맨날 문자열 이어붙이며 살아왔는데...
+
+개편하다..
+
+    //console.log(type + " 넓이:" + area);
+    console.log(`${type} 넓이는? : ${area}`);
+
+    //setLog(type + ":" + area);
+    setLog(`${type}:${area}`);
