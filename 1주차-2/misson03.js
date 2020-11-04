@@ -48,26 +48,26 @@ function printScore(grades)
     arr_maxAve = new Array();   //모든 학생의 최고점수의 평균점수
 
     var sum = 0;
-    grades.forEach(student => {
+
+    grades.forEach(element => {
         //학생의 평균 구하기
-        student.forEach(score => {
-            sum += score;
-        });
-        arr_ave.push(sum / student.length);
-        sum = 0;
+        result = element.reduce((acc, cur, i) => {
+            return acc + cur;
+        }, 0);
         
+        arr_ave.push(result / element.length);
+
         //학생의 최대값 찾기
-        var max = Math.max.apply(null, student);
+        var max = Math.max.apply(null, element);
         arr_maxAve.push(max);
     });
-
-    //학생들 최고점수의 평균 구하기
-    var sum2 = 0;
-    arr_maxAve.forEach(maxScore => {
-        sum2 += maxScore;
-    });
-    var maxAve = (sum2 / grades.length);
     
+    //학생들 최고점수의 평균 구하기
+    result2 = arr_maxAve.reduce((acc, cur, i) => {
+        return acc + cur;
+    }, 0);
+    var maxAve = (result2 / grades.length);
+
     console.log(`각 학생의 평균점수 :\n${arr_ave.join()}`);
     console.log(`모든 학생의 최고점수의 평균점수 :\n${maxAve}`);
 }
