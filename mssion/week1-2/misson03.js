@@ -46,7 +46,7 @@ function printScore(grades)
 {
     arr_ave = new Array();  //각 학생의 평균점수
     arr_maxAve = new Array();   //모든 학생의 최고점수의 평균점수
-
+    
     var sum = 0;
 
     grades.forEach(element => {
@@ -73,35 +73,57 @@ function printScore(grades)
 }
 
 
-//객체에서 숫자 밸류의 키만 배열에 저장하는 함수
-function printObjectNumber(data)
+//객체에서 숫자 밸류의 키만 배열에 저장하는 재귀함수
+function checkNumber(data, arr_key)
 {
-    var arr_num = new Array();
-    var keys = Object.keys(data);
-
-    for(key in data)
+    if(typeof(data) == "object")
     {
-        var dataValue = data[key];
-        
-        if(typeof(dataValue) == "object")
+        for(key in data)
         {
-            for(key2 in dataValue)
-            {
-                if(typeof(dataValue[key2]) == "number")
-                {
-                    arr_num.push(key2);
-                }
-            }
-        }
-        else if(typeof(dataValue) == "number")
-        {
-            arr_num.push(key);
+            var dataValue = data[key];
+            checkNumber(dataValue, arr_key);
         }
     }
-
-    console.log(arr_num.join());
+    else if(typeof(data) == "number")
+    {
+        arr_key.push(key);
+    }
 }
 
+//출력용 함수
+function printKey(data)
+{
+    let arr_key = new Array();
+    checkNumber(data, arr_key);
+    console.log(arr_key.join());
+}
+
+
+//타입이 sk인지 체크해서 이름만 저장하는 함수
+function checkArray(data, arr_name)
+{
+	data.forEach(function(el) {
+		if(el.type === 'sk')
+		{
+			arr_name.push(el.name);
+		}
+		for(key in el)
+		{
+			let dataValue = el[key];
+			if(typeof(dataValue) == "object")
+			{
+				checkArray(dataValue, arr_name);
+			}
+		}
+	});
+}
+
+function printName(data)
+{
+    let arr_name = new Array();
+    checkArray(data, arr_name);
+    console.log(arr_name.join());
+}
 
 
 
@@ -148,6 +170,89 @@ const data = {
         "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
     }
 }
-printObjectNumber(data);
+printKey(data);
 
-
+//Test Case - 5. 배열 결과 출력
+console.log("\n\n##### Test Case - 5. 배열 결과 출력 #####")
+const data2 = 
+[{
+	"id": 1,
+	"name": "Yong",
+	"phone": "010-0000-0000",
+	"type": "sk",
+	"childnode": [{
+		"id": 11,
+		"name": "echo",
+		"phone": "010-0000-1111",
+		"type": "kt",
+		"childnode": [{
+				"id": 115,
+				"name": "hary",
+				"phone": "211-1111-0000",
+				"type": "sk",
+				"childnode": [{
+					"id": 1159,
+					"name": "pobi",
+					"phone": "010-444-000",
+					"type": "kt",
+					"childnode": [{
+							"id": 11592,
+							"name": "cherry",
+							"phone": "111-222-0000",
+							"type": "lg",
+							"childnode": []
+						},
+						{
+							"id": 11595,
+							"name": "solvin",
+							"phone": "010-000-3333",
+							"type": "sk",
+							"childnode": []
+						}
+					]
+				}]
+			},
+			{
+				"id": 116,
+				"name": "kim",
+				"phone": "444-111-0200",
+				"type": "kt",
+				"childnode": [{
+					"id": 1168,
+					"name": "hani",
+					"phone": "010-222-0000",
+					"type": "sk",
+					"childnode": [{
+						"id": 11689,
+						"name": "ho",
+						"phone": "010-000-0000",
+						"type": "kt",
+						"childnode": [{
+								"id": 116890,
+								"name": "wonsuk",
+								"phone": "010-000-0000",
+								"type": "kt",
+								"childnode": []
+							},
+							{
+								"id": 1168901,
+								"name": "chulsu",
+								"phone": "010-0000-0000",
+								"type": "sk",
+								"childnode": []
+							}
+						]
+					}]
+				}]
+			},
+			{
+				"id": 117,
+				"name": "hong",
+				"phone": "010-0000-0000",
+				"type": "lg",
+				"childnode": []
+			}
+		]
+	}]
+}];
+printName(data2);
